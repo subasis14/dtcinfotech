@@ -16,7 +16,7 @@ const StateDataGrid = () => {
         <TextField
           type="text"
           variant="filled"
-          defaultValue={params.row.name}
+          value={params.row.firstName}
           onChange={(e) => {
             let regex = /^[a-zA-Z\s]*$/;
             if (regex.test(e.target.value)) {
@@ -36,7 +36,7 @@ const StateDataGrid = () => {
         <TextField
           type="text"
           variant="filled"
-          defaultValue={params.row.name}
+          value={params.row.lastName}
           onChange={(e) => {
             let regex = /^[a-zA-Z\s]*$/;
             if (regex.test(e.target.value)) {
@@ -57,7 +57,7 @@ const StateDataGrid = () => {
         <TextField
           type="number"
           variant="filled"
-          defaultValue={params.row.name}
+          value={params.row.age}
           onChange={(e) => {
             if (e.target.value >= 0 || e.target.value === "") {
               handleFieldChange(params.id, "age", e.target.value);
@@ -76,7 +76,7 @@ const StateDataGrid = () => {
         <TextField
           type="email"
           variant="filled"
-          defaultValue={params.row.name}
+          value={params.row.email}
           onChange={(e) => {
             handleFieldChange(params.id, "email", e.target.value);
           }}
@@ -91,7 +91,7 @@ const StateDataGrid = () => {
         <TextField
           type="number"
           variant="filled"
-          defaultValue={params.row.name}
+          value={params.row.phone}
           onChange={(e) => {
             let phoneValue = e.target.value;
             if (phoneValue >= 0) {
@@ -115,7 +115,7 @@ const StateDataGrid = () => {
         <TextField
           type="text"
           variant="filled"
-          defaultValue={params.row.name}
+          value={params.row.city}
           onChange={(e) => {
             handleFieldChange(params.id, "city", e.target.value);
           }}
@@ -130,7 +130,7 @@ const StateDataGrid = () => {
         <TextField
           type="text"
           variant="filled"
-          defaultValue={params.row.name}
+          value={params.row.country}
           onChange={(e) => {
             handleFieldChange(params.id, "country", e.target.value);
           }}
@@ -164,7 +164,7 @@ const StateDataGrid = () => {
     },
   ];
 
-  const rows = [
+  const rows = JSON.parse(localStorage.getItem("gridRows")) || [
     {
       id: 1,
       customId: "a",
@@ -209,6 +209,7 @@ const StateDataGrid = () => {
     });
     setGridRows(updatedRows);
   };
+
   const handleAddRow = () => {
     const newRows = [
       ...gridRows,
@@ -240,6 +241,10 @@ const StateDataGrid = () => {
   const handleSelectionChange = (newSelection) => {
     setSelectedRows(newSelection);
   };
+
+  useEffect(() => {
+    localStorage.setItem("gridRows", JSON.stringify(gridRows));
+  }, [gridRows]);
 
   return (
     <div style={{ height: 400, width: "100%" }}>
