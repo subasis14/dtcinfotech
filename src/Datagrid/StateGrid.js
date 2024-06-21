@@ -111,6 +111,9 @@ const StateDataGrid = () => {
       field: "city",
       headerName: "City",
       width: 150,
+      sortable: false,
+      resizable: false,
+      disableColumnMenu: true,
       renderCell: (params) => (
         <TextField
           type="text"
@@ -126,6 +129,9 @@ const StateDataGrid = () => {
       field: "country",
       headerName: "Country",
       width: 150,
+      sortable: false,
+      resizable: false,
+      disableColumnMenu: true,
       renderCell: (params) => (
         <TextField
           type="text"
@@ -156,6 +162,9 @@ const StateDataGrid = () => {
       field: "actions",
       headerName: "Action",
       width: 150,
+      sortable: false,
+      resizable: false,
+      disableColumnMenu: true,
       renderCell: (params) => (
         <IconButton onClick={() => handleDelete(params.id)}>
           <DeleteIcon />
