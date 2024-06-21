@@ -3,6 +3,7 @@ import { Button, Grid, IconButton, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { DataGrid } from "@mui/x-data-grid";
+import { useDebouce } from "../hooks/useDebounce";
 
 const StateDataGrid = () => {
   const columns = [
@@ -203,6 +204,8 @@ const StateDataGrid = () => {
   const [gridRows, setGridRows] = useState(rows);
   const [nextId, setNextId] = useState(3);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const debounceText = useDebouce(searchText, 300);
 
   const handleDelete = (id) => {
     const updatedRows = gridRows.filter((item) => item.customId !== id);
@@ -251,6 +254,20 @@ const StateDataGrid = () => {
     setSelectedRows(newSelection);
   };
 
+  const handleSearchTextChange = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const filterRows = () => {
+    return gridRows.filter((row) =>
+      Object.values(row).some(
+        (value) =>
+          typeof value === "string" &&
+          value.toLowerCase().includes(debounceText.toLowerCase())
+      )
+    );
+  };
+
   useEffect(() => {
     localStorage.setItem("gridRows", JSON.stringify(gridRows));
   }, [gridRows]);
@@ -276,9 +293,18 @@ const StateDataGrid = () => {
             <DeleteIcon />
           </IconButton>
         </Grid>
+        <Grid item>
+          <TextField
+            label="Search"
+            variant="outlined"
+            size="small"
+            value={searchText}
+            onChange={handleSearchTextChange}
+          />
+        </Grid>
       </Grid>
       <DataGrid
-        rows={gridRows}
+        rows={filterRows()}
         columns={columns}
         getRowId={(row) => row.customId}
         pageSize={5}
