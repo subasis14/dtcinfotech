@@ -1,118 +1,275 @@
-import React from "react";
-import { IconButton, MenuItem, TextField } from "@mui/material";
+import React, { useEffect } from "react";
+import { IconButton, TextField, Grid, Button } from "@mui/material";
 
-import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
-import { useSelector, useDispatch } from "react-redux";
-import { setEditingRowId, setNewRow, updateRow } from "../Slice";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import {
+  setSelectedRows,
+  setSearchText,
+  addRow,
+  deleteRow,
+  updateRow,
+  deleteSelectedRows,
+} from "../Slice";
 import { DataGrid } from "@mui/x-data-grid";
+import { useDispatch, useSelector } from "react-redux";
+import { useDebounce } from "../hooks/useDebounce";
 
 const DataGridTable = () => {
-  const rows = useSelector((state) => state.data.rows);
-  const editingRowId = useSelector((state) => state.data.editingRowId);
-  const newRow = useSelector((state) => state.data.newRow);
-  const dispatch = useDispatch();
-
-  const handleSave = (id) => {
-    console.log(newRow);
-    dispatch(updateRow({ id, updatedRow: newRow }));
-  };
-
-  const handleChange = (e, id, field) => {
-    const { value } = e.target;
-    if (field === "phone" && value.length > 10) {
-      return;
-    }
-    console.log(value);
-    dispatch(setNewRow({ ...newRow, [field]: value }));
-  };
-
   const columns = [
-    { field: "id", headerName: "ID", width: 100 },
+    { field: "id", headerName: "ID", width: 100, editable: true },
     {
-      field: "first_name",
+      field: "firstName",
       headerName: "First Name",
       width: 150,
-      editable: true,
+
       renderCell: (params) => (
         <TextField
           type="text"
-          variant="standard"
-          value={params.row.first_name}
+          variant="filled"
+          value={params.row.firstName}
           onChange={(e) => {
-            e.preventDefault();
-            alert("22");
+            let regex = /^[a-zA-Z\s]*$/;
+            if (regex.test(e.target.value)) {
+              handleFieldChange(params.id, "firstName", e.target.value);
+            } else {
+              e.target.value = "";
+            }
           }}
         />
       ),
     },
-
     {
-      field: "last_name",
+      field: "lastName",
       headerName: "Last Name",
       width: 150,
-      editable: true,
+      renderCell: (params) => (
+        <TextField
+          type="text"
+          variant="filled"
+          value={params.row.lastName}
+          onChange={(e) => {
+            let regex = /^[a-zA-Z\s]*$/;
+            if (regex.test(e.target.value)) {
+              handleFieldChange(params.id, "lastName", e.target.value);
+            } else {
+              e.target.value = "";
+            }
+          }}
+        />
+      ),
     },
-    { field: "email", headerName: "Email", width: 200, editable: true },
-    { field: "phone", headerName: "Phone", width: 150, editable: true },
     {
-      field: "DOB",
-      headerName: "DOB",
-      width: 150,
-      editable: true,
+      field: "age",
+      headerName: "Age",
+      type: "number",
+      width: 100,
+      renderCell: (params) => (
+        <TextField
+          type="number"
+          variant="filled"
+          value={params.row.age}
+          onChange={(e) => {
+            if (e.target.value >= 0 || e.target.value === "") {
+              handleFieldChange(params.id, "age", e.target.value);
+            } else {
+              e.target.value = "";
+            }
+          }}
+        />
+      ),
     },
     {
-      field: "Gender",
-      headerName: "Gender",
+      field: "email",
+      headerName: "Email",
+      width: 200,
+      renderCell: (params) => (
+        <TextField
+          type="email"
+          variant="filled"
+          value={params.row.email}
+          onChange={(e) => {
+            handleFieldChange(params.id, "email", e.target.value);
+          }}
+        />
+      ),
+    },
+    {
+      field: "phone",
+      headerName: "Phone",
       width: 150,
-      editable: true,
-      renderCell: (params) =>
-        params.row.isEditing ? (
-          <TextField
-            name="Gender"
-            value={params.row.Gender}
-            onChange={(e) => handleChange(e, params.row.id, "Gender")}
-            select
-          >
-            <MenuItem value="Male">Male</MenuItem>
-            <MenuItem value="Female">Female</MenuItem>
-            <MenuItem value="Other">Other</MenuItem>
-          </TextField>
-        ) : (
-          <div>{params.value}</div>
-        ),
+      renderCell: (params) => (
+        <TextField
+          type="number"
+          variant="filled"
+          value={params.row.phone}
+          onChange={(e) => {
+            let phoneValue = e.target.value;
+            if (phoneValue >= 0) {
+              if (phoneValue.toString().length <= 10) {
+                handleFieldChange(params.id, "phone", e.target.value);
+              } else {
+                e.target.value = "";
+              }
+            } else {
+              e.target.value = "";
+            }
+          }}
+        />
+      ),
+    },
+    {
+      field: "city",
+      headerName: "City",
+      width: 150,
+      sortable: false,
+      resizable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => (
+        <TextField
+          type="text"
+          variant="filled"
+          value={params.row.city}
+          onChange={(e) => {
+            handleFieldChange(params.id, "city", e.target.value);
+          }}
+        />
+      ),
+    },
+    {
+      field: "country",
+      headerName: "Country",
+      width: 150,
+      sortable: false,
+      resizable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => (
+        <TextField
+          type="text"
+          variant="filled"
+          value={params.row.country}
+          onChange={(e) => {
+            handleFieldChange(params.id, "country", e.target.value);
+          }}
+        />
+      ),
+    },
+    {
+      field: "dob",
+      headerName: "Date Of Birth",
+      width: 150,
+      renderCell: (params) => (
+        <TextField
+          type="date"
+          variant="filled"
+          defaultValue={params.row.name}
+          onChange={(e) => {
+            handleFieldChange(params.id, "dob", e.target.value);
+          }}
+        />
+      ),
     },
     {
       field: "actions",
-      headerName: "Actions",
-      width: 120,
-
-      renderCell: (params) =>
-        params.row.isEditing ? (
-          <IconButton onClick={() => handleSave(params.row.id)}>
-            <SaveIcon />
-          </IconButton>
-        ) : (
-          <IconButton onClick={() => handleSave(params.row.id)}>
-            <EditIcon />
-          </IconButton>
-        ),
+      headerName: "Action",
+      width: 150,
+      sortable: false,
+      resizable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => (
+        <IconButton onClick={() => handleDelete(params.id)}>
+          <DeleteIcon />
+        </IconButton>
+      ),
     },
   ];
-  const [selectionModel, setSelectionModel] = React.useState([]);
+
+  const dispatch = useDispatch();
+  const gridRows = useSelector((state) => state.grid.rows);
+  const nextId = useSelector((state) => state.grid.nextId);
+  const selectedRows = useSelector((state) => state.grid.selectedRows);
+  const searchText = useSelector((state) => state.grid.searchText);
+  const debounceText = useDebounce(searchText, 300);
+
+  useEffect(() => {
+    localStorage.setItem("gridRows", JSON.stringify(gridRows));
+  }, [gridRows]);
+
+  const handleDelete = (customId) => {
+    dispatch(deleteRow(customId));
+  };
+
+  const handleFieldChange = (customId, field, value) => {
+    dispatch(updateRow({ customId, field, value }));
+  };
+
+  const handleAddRow = () => {
+    dispatch(addRow());
+  };
+
+  const handleMultiDelete = () => {
+    dispatch(deleteSelectedRows());
+  };
+
+  const handleSelectionChange = (newSelection) => {
+    dispatch(setSelectedRows(newSelection));
+  };
+
+  const handleSearchTextChange = (e) => {
+    dispatch(setSearchText(e.target.value));
+  };
+
+  const filterRows = () => {
+    return gridRows.filter((row) =>
+      Object.values(row).some(
+        (value) =>
+          typeof value === "string" &&
+          value.toLowerCase().includes(debounceText.toLowerCase())
+      )
+    );
+  };
   return (
     <div style={{ height: 400, width: "100%" }}>
+      <Grid container alignItems="center" spacing={2}>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={handleAddRow}
+          >
+            Add Row
+          </Button>
+        </Grid>
+        <Grid item>
+          <IconButton
+            disabled={selectedRows.length === 0}
+            onClick={handleMultiDelete}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <TextField
+            label="Search"
+            variant="outlined"
+            size="small"
+            value={searchText}
+            onChange={handleSearchTextChange}
+          />
+        </Grid>
+      </Grid>
       <DataGrid
-        rows={rows}
+        rows={filterRows()}
         columns={columns}
+        getRowId={(row) => row.customId}
         pageSize={5}
-        getRowId={(row) => row.id}
         checkboxSelection
         disableSelectionOnClick
-        onSelectionModelChange={(newSelectionModel) => {
-          setSelectionModel(newSelectionModel);
+        selectionModel={selectedRows}
+        onRowSelectionModelChange={(GridRowSelectedParams) => {
+          handleSelectionChange(GridRowSelectedParams);
         }}
-        selectionModel={selectionModel}
       />
     </div>
   );
