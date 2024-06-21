@@ -192,7 +192,7 @@ const StateDataGrid = () => {
   ];
 
   const [gridRows, setGridRows] = useState(rows);
-  const [nextId, setNextId] = useState(gridRows.length + 1);
+  const [nextId, setNextId] = useState(3);
   const [selectedRows, setSelectedRows] = useState([]);
 
   const handleDelete = (id) => {
