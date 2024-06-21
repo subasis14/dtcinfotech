@@ -228,6 +228,21 @@ const DataGridTable = () => {
       )
     );
   };
+
+  /*
+  useRef Assignment start here
+  */
+
+  const forLoopData = ["Item 1", "Item 2", "Item 3"];
+
+  const inputRefs = React.useRef(forLoopData.map(() => React.createRef()));
+
+  const focusInput = (index) => {
+    inputRefs.current[index].current.focus();
+  };
+
+  // End Here//
+
   return (
     <div style={{ height: 400, width: "100%" }}>
       <Grid container alignItems="center" spacing={2}>
@@ -271,6 +286,15 @@ const DataGridTable = () => {
           handleSelectionChange(GridRowSelectedParams);
         }}
       />
+      <hr />
+
+      <h2>useRef Assignment</h2>
+      {forLoopData.map((item, index) => (
+        <div key={index}>
+          <input ref={inputRefs.current[index]} type="text" />
+          <button onClick={() => focusInput(index)}>Focus</button>
+        </div>
+      ))}
     </div>
   );
 };
