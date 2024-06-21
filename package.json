@@ -1,6 +1,7 @@
 {
   "name": "datagrid",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -9,9 +10,6 @@
     "@mui/material": "^5.15.20",
     "@mui/x-data-grid": "^7.7.0",
     "@reduxjs/toolkit": "^2.2.5",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "@types/react-data-grid": "^4.0.12",
     "axios": "^1.7.2",
     "cors": "^2.8.5",
@@ -27,7 +25,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -49,6 +47,11 @@
     ]
   },
   "devDependencies": {
-    "json-server": "^1.0.0-beta.1"
+    "@babel/preset-react": "^7.24.7",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "babel-jest": "^29.7.0",
+    "jest": "^27.5.1"
   }
 }
