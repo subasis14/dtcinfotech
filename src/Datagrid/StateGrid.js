@@ -201,19 +201,6 @@ const StateDataGrid = () => {
   };
 
   const handleFieldChange = (customId, field, value) => {
-    let updatedValue = value;
-
-    // Validate based on field
-    if (field === "firstName") {
-      // Regular expression to allow only alphabetic characters and spaces
-      let regex = /^[a-zA-Z\s]*$/;
-      if (/[^a-zA-Z\s]/.test(value)) {
-        console.log(value);
-        // If the input does not match the regex, do not update the state
-        return;
-      }
-    }
-
     const updatedRows = gridRows.map((row) => {
       if (row.customId === customId) {
         return { ...row, [field]: value };
@@ -253,7 +240,7 @@ const StateDataGrid = () => {
   const handleSelectionChange = (newSelection) => {
     setSelectedRows(newSelection);
   };
-  console.log(gridRows);
+
   return (
     <div style={{ height: 400, width: "100%" }}>
       <Grid container alignItems="center" spacing={2}>
