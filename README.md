@@ -6,8 +6,7 @@ React Project for DataGrid
 
 # Installation
 
-Clone the project and run the following commands
-To install node module from React and Node server
+Clone the project and run the following commands:
 
 ```
  npm install
