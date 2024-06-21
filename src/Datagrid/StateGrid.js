@@ -3,7 +3,7 @@ import { Button, Grid, IconButton, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { DataGrid } from "@mui/x-data-grid";
-import { useDebouce } from "../hooks/useDebounce";
+import { useDebounce } from "../hooks/useDebounce";
 
 const StateDataGrid = () => {
   const columns = [
@@ -205,7 +205,7 @@ const StateDataGrid = () => {
   const [nextId, setNextId] = useState(3);
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const debounceText = useDebouce(searchText, 300);
+  const debounceText = useDebounce(searchText, 300);
 
   const handleDelete = (id) => {
     const updatedRows = gridRows.filter((item) => item.customId !== id);
