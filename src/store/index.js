@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import dataReducer from "../Slice";
+import gridReducer from "../Slice";
 
 export const store = configureStore({
   reducer: {
-    data: dataReducer,
+    grid: gridReducer,
   },
 });
